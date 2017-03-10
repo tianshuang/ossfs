@@ -398,40 +398,6 @@ bool StatCache::TruncateCache(void)
 
 bool StatCache::DelStat(const char* key)
 {
-  if(!key){
-    return false;
-  }
-  S3FS_PRN_INFO3("delete stat cache entry[path=%s]", key);
-
-  pthread_mutex_lock(&StatCache::stat_cache_lock);
-
-  stat_cache_t::iterator iter;
-  if(stat_cache.end() != (iter = stat_cache.find(string(key)))){
-    if((*iter).second){
-      delete (*iter).second;
-    }
-    stat_cache.erase(iter);
-  }
-  if(0 < strlen(key) && 0 != strcmp(key, "/")){
-    string strpath = key;
-    if('/' == strpath[strpath.length() - 1]){
-      // If there is "path" cache, delete it.
-      strpath = strpath.substr(0, strpath.length() - 1);
-    }else{
-      // If there is "path/" cache, delete it.
-      strpath += "/";
-    }
-    if(stat_cache.end() != (iter = stat_cache.find(strpath.c_str()))){
-      if((*iter).second){
-        delete (*iter).second;
-      }
-      stat_cache.erase(iter);
-    }
-  }
-  S3FS_MALLOCTRIM(0);
-
-  pthread_mutex_unlock(&StatCache::stat_cache_lock);
-
   return true;
 }
 

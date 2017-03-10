@@ -2411,7 +2411,7 @@ static int list_bucket(const char* path, S3ObjList& head, const char* delimiter,
   string    query_prefix;;
   string    query_maxkey;;
   string    next_marker = "";
-  bool      truncated = true;
+  bool      truncated = false;
   S3fsCurl  s3fscurl;
   xmlDocPtr doc;
   BodyData* body;
