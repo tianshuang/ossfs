@@ -11,6 +11,8 @@ Forked from [aliyun/ossfs](https://github.com/aliyun/ossfs)，因为公司业务
 
 另外一处修改的地方就是不会再删除内存 map 中的 cachestat, 在 DEBUG 日志中我们发现每次 object 请求都会触发一次 HTTP 请求检查文件元信息，而我司的业务场景中自文件上传至 OSS 就不会再发生变化，所以我们也将这次检查干掉了，因为 OSS 的请求次数价格为 0.01元/万次，如果按每天千万次计算则为每天10元钱，啊，又帮公司省钱了～
 
+自行编译使用即可。
+
 ### 功能
 
 ossfs 基于s3fs 构建，具有s3fs 的全部功能。主要功能包括：
