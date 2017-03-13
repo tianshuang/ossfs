@@ -5,7 +5,7 @@
 
 ### 简介
 
-Forked from aliyun/ossfs，因为公司业务的关系，我对 ossfs 的源码进行了小小的修改，以适应公司业务的需要。
+Forked from [aliyun/ossfs](https://github.com/aliyun/ossfs)，因为公司业务的关系，我对 ossfs 的源码进行了小小的修改，以适应公司业务的需要。
 
 正如 commit 信息所述：disable list bucket and delete stat in memory，之所以要对这两处做修改是因为我们在测试环境中发现，一个简单的 list 请求可能会引发严重的性能问题，我们在测试环境的 bucket 根目录（其实OSS本身没有目录，只是路径拼接）中放入了 20 万个 object，只要使用 ls，机器在很长一段时间内都无法访问 OSS，根据 DEBUG 日志发现，一次 ls 操作等于 1 dir + n objectattr 次 http 请求，大家可查看这个 [Issue](https://github.com/aliyun/ossfs/issues/13)，而我司业务的需求不需要用到 ls，并且其他监控进程扫描到挂载的目录也会触发 ls 导致严重的性能问题，所以我们将源码里 ls 那 n 次 objectattr 干掉了。
 
