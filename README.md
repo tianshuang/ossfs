@@ -7,9 +7,9 @@
 
 Forked from [aliyun/ossfs](https://github.com/aliyun/ossfs)，因为公司业务的关系，我对 ossfs 的源码进行了小小的修改，以适应公司业务的需要。
 
-正如 commit 信息所述：disable list bucket and delete stat in memory，之所以要对这两处做修改是因为我们在测试环境中发现，一个简单的 list 请求可能会引发严重的性能问题，我们在测试环境的 bucket 根目录（其实OSS本身没有目录，只是路径拼接）中放入了 20 万个 object，只要使用 ls，机器在很长一段时间内都无法访问 OSS，根据 DEBUG 日志发现，一次 ls 操作等于 1 dir + n objectattr 次 http 请求，大家可查看这个 [Issue](https://github.com/aliyun/ossfs/issues/13)，而我司业务的需求不需要用到 ls，并且其他监控进程扫描到挂载的目录也会触发 ls 导致严重的性能问题，所以我们将源码里 ls 那 n 次 objectattr 干掉了。
+正如 [commit](https://github.com/tianshuang/ossfs/commit/25a42f1b333aa2a3242098eaa65aa7cb54b627d4) 信息所述：disable list bucket and delete stat in memory，之所以要对这两处做修改是因为我们在测试环境中发现，一个简单的 list 请求可能会引发严重的性能问题，我们在测试环境的 bucket 根目录（其实OSS本身没有目录，只是路径拼接）中放入了 20 万个 object，只要使用 ls，机器在很长一段时间内都无法访问 OSS，根据 DEBUG 日志发现，一次 ls 操作等于 1 dir + n objectattr 次 http 请求，大家可查看这个 [Issue](https://github.com/aliyun/ossfs/issues/13)，而我司业务的需求不需要用到 ls，并且其他监控进程扫描到挂载的目录也会触发 ls 导致严重的性能问题，所以我们将源码里 ls 那 n 次 objectattr 干掉了。
 
-另外一处修改的地方就是不会再删除内存 map 中的 cachestat, 在 DEBUG 日志中我们发现每次 object 请求都会触发一次 HTTP 请求检查文件元信息，而我司的业务场景中自文件上传至 OSS 就不会再发生变化，所以我们也将这次检查干掉了，因为 OSS 的请求次数价格为 0.01元/万次，如果按每天千万次计算则为每天10元钱，啊，又帮公司省钱了～
+另外一处修改的地方就是不会再删除内存 map 中的 cachestat, 在 DEBUG 日志中我们发现每次 object 请求都会触发一次 HTTP 请求检查文件元信息，而我司的业务场景中自文件上传至 OSS 就不会再发生变化，所以我们也将这次检查干掉了，因为 OSS 的请求次数价格为 0.01 元/万次，如果按每天千万次计算则为每天 10 元钱。
 
 自行编译使用即可。
 
